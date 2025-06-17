@@ -20,5 +20,5 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "go get github.com/rubrikinc/rubrik-sdk-for-go/rubrikcdm && go get github.com/prometheus/client_golang/prometheus && go get github.com/rubrikinc/rubrik-polaris-sdk-for-go/examples/appliance"
+  "postCreateCommand": "cd /workspace/rubrik-client-for-prometheus/src/golang && go mod tidy"
 }

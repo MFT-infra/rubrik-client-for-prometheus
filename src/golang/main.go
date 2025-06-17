@@ -44,7 +44,7 @@ func main() {
 		log.Fatal(err)
 	}
 	clusterName := clusterDetails.(map[string]interface{})["name"]
-	log.Printf("Cluster name: " + clusterName.(string))
+	log.Printf("%s", "Cluster name: " + clusterName.(string))
 
 	// get storage summary
 	go func() {
