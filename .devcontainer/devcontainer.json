@@ -1,6 +1,11 @@
 {
   "name": "Rubrik Prometheus Client - Go",
   "image": "mcr.microsoft.com/devcontainers/go",
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {
+        "version": "latest"
+    }
+  },
   "customizations": {
     "vscode": {
       "settings": {},
