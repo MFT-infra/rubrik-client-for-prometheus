@@ -1,13 +1,3 @@
-/*
-Rubrik Prometheus Client
-Requirements:
-	Go 1.x (tested with 1.11)
-	Rubrik SDK for Go (go get github.com/rubrikinc/rubrik-sdk-for-go)
-	Prometheus Client for Go (go get github.com/prometheus/client_golang)
-	Rubrik CDM 3.0+
-	Environment variables for rubrik_cdm_node_ip (IP of Rubrik node), rubrik_cdm_username (Rubrik username), rubrik_cdm_password (Rubrik password)
-*/
-
 package main
 
 import (
@@ -21,7 +11,6 @@ import (
 	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/livemount"
 	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/objectprotection"
 	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/stats"
-	"github.com/rubrikinc/rubrik-sdk-for-go/rubrikcdm"
 )
 
 func main() {
@@ -33,10 +22,9 @@ func main() {
 	} else {
 		httpPort = httpPortEnv
 	}
-	rubrik, err := rubrikcdm.ConnectEnv()
+	rubrik, err := connectRubrik()
 	if err != nil {
-		log.Printf("Error from main.go:")
-		log.Fatal(err)
+		log.Fatalf("Failed to connect to Rubrik: %v", err)
 	}
 	clusterDetails, err := rubrik.Get("v1", "/cluster/me", 60)
 	if err != nil {
@@ -44,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 	clusterName := clusterDetails.(map[string]interface{})["name"]
-	log.Printf("%s", "Cluster name: " + clusterName.(string))
+	log.Printf("%s", "Cluster name: "+clusterName.(string))
 
 	// get storage summary
 	go func() {
