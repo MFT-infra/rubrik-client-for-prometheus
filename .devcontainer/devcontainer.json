@@ -16,7 +16,8 @@
         "GitHub.copilot",
         "GitHub.remotehub",
         "github.github-vscode-theme",
-        "davidanson.vscode-markdownlint"
+        "davidanson.vscode-markdownlint",
+        "ms-azuretools.vscode-containers"
       ]
     }
   },
