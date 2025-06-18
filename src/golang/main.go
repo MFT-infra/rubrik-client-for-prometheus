@@ -135,6 +135,6 @@ func main() {
 	// The Handler function provides a default handler to expose metrics
 	// via an HTTP server. "/metrics" is the usual endpoint for that.
 	http.Handle("/metrics", promhttp.Handler())
-	log.Printf("Starting on HTTP port " + httpPort)
+	log.Printf("%s", "Starting on HTTP port " + httpPort)
 	log.Fatal(http.ListenAndServe(":"+httpPort, nil))
 }
