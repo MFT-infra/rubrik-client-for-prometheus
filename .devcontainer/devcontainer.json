@@ -26,5 +26,5 @@
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "cd /workspace/rubrik-client-for-prometheus/src/golang && go mod tidy"
+  "postCreateCommand": "cd /workspaces/rubrik-client-for-prometheus/src/golang && go mod tidy"
 }
