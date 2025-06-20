@@ -37,7 +37,7 @@
     }
   },
   "portsAttributes": {
-    "8080": {
+    "8080/metrics": {
       "label": "Prometheus Client http",
       "onAutoForward": "notify"
     }

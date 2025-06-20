@@ -46,7 +46,7 @@ func connectRubrik(cfg *Config) (*rubrikcdm.Credentials, error) {
 }
 
 func getServiceAccountToken(ip, id, secret string) (string, error) {
-	url := fmt.Sprintf("https://%s/api/service_account/session", ip)
+	url := fmt.Sprintf("https://%s/api/v1/service_account/session", ip)
 	payload := map[string]interface{}{
 		"serviceAccountId":  id,
 		"secret":            secret,

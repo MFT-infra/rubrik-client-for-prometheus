@@ -1,22 +1,25 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"github.com/spf13/viper"
+	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/spf13/viper"
 )
 
 // Config holds the configuration values for the Rubrik exporter.
 type Config struct {
-	RubrikIP       string `json:"rubrik_ip" yaml:"rubrik_ip"`
-	Username       string `json:"username" yaml:"username"`
-	Password       string `json:"password" yaml:"password"`
-	ApiToken       string `json:"api_token" yaml:"api_token"`
-	ServiceID      string `json:"service_id" yaml:"service_id"`
-	ServiceSecret  string `json:"service_secret" yaml:"service_secret"`
-	PrometheusPort string `json:"prometheus_port" yaml:"prometheus_port"`
+	RubrikIP       string `mapstructure:"rubrik_ip"`
+	Username       string `mapstructure:"username"`
+	Password       string `mapstructure:"password"`
+	ApiToken       string `mapstructure:"api_token"`
+	ServiceID      string `mapstructure:"service_id"`
+	ServiceSecret  string `mapstructure:"service_secret"`
+	PrometheusPort string `mapstructure:"prometheus_port"`
 }
+
 
 // LoadConfig loads the configuration from a file, CMD line arguments or environment variables.
 // Package config provides functionality to load and manage configuration settings for the Rubrik exporter.
@@ -25,70 +28,35 @@ type Config struct {
 func LoadConfig() (*Config, error) {
 	v := viper.New()
 
-	// Allow config from file
-	v.SetConfigName("config")
+	// Set config file name (without extension) and add search paths
+	v.SetConfigName("config") // Will look for config.yaml or config.json
 	v.AddConfigPath(".")
 	v.AddConfigPath("/etc/rubrik-exporter/")
 	v.AddConfigPath("$HOME/.rubrik-exporter")
-	v.SetConfigType("yaml")
 
-	// Check for both JSON and YAML
-	if err := v.ReadInConfig(); err != nil {
-		fmt.Printf("No config file found: %v (continuing)\n", err)
-	}
-
-	// Support ENV variables like RUBRIK_IP, etc.
+	// Support ENV variables
 	v.AutomaticEnv()
-	v.SetEnvPrefix("rubrik") // prefix like RUBRIK_USERNAME
+	v.SetEnvPrefix("rubrik")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	// Default fallback port
+	// Set default values
 	v.SetDefault("prometheus_port", "8080")
 
-	err := v.ReadInConfig()
-	if err != nil {
-		fmt.Printf("No config file found: %v (continuing)\n", err)
+	// Add the directory of the running executable
+	execPath, err := os.Executable()
+	if err == nil {
+		execDir := filepath.Dir(execPath)
+		v.AddConfigPath(execDir)
 	}
 
+	// Try loading config.yaml or config.json
 	var cfg Config
-	err = v.Unmarshal(&cfg)
-
-	var (
-		flagRubrikIP       = flag.String("rubrik-ip", "", "Rubrik IP or FQDN")
-		flagUsername       = flag.String("username", "", "Rubrik username")
-		flagPassword       = flag.String("password", "", "Rubrik password")
-		flagApiToken       = flag.String("api-token", "", "Rubrik API token")
-		flagServiceID      = flag.String("service-id", "", "Service account ID")
-		flagServiceSecret  = flag.String("service-secret", "", "Service account secret")
-		flagPrometheusPort = flag.String("prometheus-port", "", "Prometheus HTTP port")
-	)
-	flag.Parse()
-
-	// Override from flags if set
-	if *flagRubrikIP != "" {
-		cfg.RubrikIP = *flagRubrikIP
-	}
-	if *flagUsername != "" {
-		cfg.Username = *flagUsername
-	}
-	if *flagPassword != "" {
-		cfg.Password = *flagPassword
-	}
-	if *flagApiToken != "" {
-		cfg.ApiToken = *flagApiToken
-	}
-	if *flagServiceID != "" {
-		cfg.ServiceID = *flagServiceID
-	}
-	if *flagServiceSecret != "" {
-		cfg.ServiceSecret = *flagServiceSecret
-	}
-	if *flagPrometheusPort != "" {
-		cfg.PrometheusPort = *flagPrometheusPort
-	}
-
-	if err != nil {
-		return nil, err
+	if err := v.ReadInConfig(); err != nil {
+		fmt.Printf("No config file found or failed to read: %v (continuing with env/flags)\n", err)
+	} else {
+		if err := v.Unmarshal(&cfg); err != nil {
+			return nil, fmt.Errorf("failed to parse config file: %w", err)
+		}
 	}
 
 	return &cfg, nil
