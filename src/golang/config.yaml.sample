@@ -1,0 +1,13 @@
+
+
+rubrik_ip: "10.10.10.10"
+
+username: "admin"
+password: "password"
+
+api_token: "your_api_token"
+
+service_id: "your_service_id"
+service_secret: "your_service_secret"
+
+prometheus_port: 8080
