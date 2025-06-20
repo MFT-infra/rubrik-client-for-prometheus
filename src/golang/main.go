@@ -7,11 +7,13 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/jobs"
-	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/livemount"
-	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/objectprotection"
-	"github.com/rubrikinc/rubrik-client-for-prometheus/src/golang/stats"
+	"github.com/MFT-infra/rubrik-client-for-prometheus/src/golang/jobs"
+	"github.com/MFT-infra/rubrik-client-for-prometheus/src/golang/livemount"
+	"github.com/MFT-infra/rubrik-client-for-prometheus/src/golang/objectprotection"
+	"github.com/MFT-infra/rubrik-client-for-prometheus/src/golang/stats"
 )
+
+
 
 func main() {
 	// set our Prometheus variables
