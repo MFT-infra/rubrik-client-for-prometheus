@@ -1,28 +1,16 @@
-// auth.go
 package main
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/rubrikinc/rubrik-sdk-for-go/rubrikcdm"
-)
-
-var (
-	rubrikIP      = flag.String("rubrik-ip", os.Getenv("RUBRIK_CDM_NODE_IP"), "Rubrik CDM node IP address")
-	username      = flag.String("username", os.Getenv("RUBRIK_CDM_USERNAME"), "Username for Rubrik")
-	password      = flag.String("password", os.Getenv("RUBRIK_CDM_PASSWORD"), "Password for Rubrik")
-	apiToken      = flag.String("api-token", os.Getenv("RUBRIK_CDM_API_TOKEN"), "Rubrik API Token")
-	serviceID     = flag.String("service-id", os.Getenv("RUBRIK_SERVICE_ID"), "Service Account ID")
-	serviceSecret = flag.String("service-secret", os.Getenv("RUBRIK_SERVICE_SECRET"), "Service Account Secret")
 )
 
 type serviceAccountResponse struct {
@@ -30,28 +18,28 @@ type serviceAccountResponse struct {
 	TTL   int    `json:"ttl"`
 }
 
-func connectRubrik() (*rubrikcdm.Credentials, error) {
-	if *rubrikIP == "" {
-		return nil, errors.New("rubrik-ip is required")
+func connectRubrik(cfg *Config) (*rubrikcdm.Credentials, error) {
+	if cfg.RubrikIP == "" {
+		return nil, errors.New("rubrik_ip is required")
 	}
 
-	if *serviceID != "" && *serviceSecret != "" {
-		token, err := getServiceAccountToken(*rubrikIP, *serviceID, *serviceSecret)
+	if cfg.ServiceID != "" && cfg.ServiceSecret != "" {
+		token, err := getServiceAccountToken(cfg.RubrikIP, cfg.ServiceID, cfg.ServiceSecret)
 		if err != nil {
 			return nil, fmt.Errorf("service account auth failed: %w", err)
 		}
 		log.Println("Using service account for authentication")
-		return rubrikcdm.ConnectAPIToken(*rubrikIP, token), nil
+		return rubrikcdm.ConnectAPIToken(cfg.RubrikIP, token), nil
 	}
 
-	if *apiToken != "" {
+	if cfg.ApiToken != "" {
 		log.Println("Using API token for authentication")
-		return rubrikcdm.ConnectAPIToken(*rubrikIP, *apiToken), nil
+		return rubrikcdm.ConnectAPIToken(cfg.RubrikIP, cfg.ApiToken), nil
 	}
 
-	if *username != "" && *password != "" {
+	if cfg.Username != "" && cfg.Password != "" {
 		log.Println("Using username/password for authentication")
-		return rubrikcdm.Connect(*username, *password, *rubrikIP), nil
+		return rubrikcdm.Connect(cfg.Username, cfg.Password, cfg.RubrikIP), nil
 	}
 
 	return nil, errors.New("no valid authentication method provided")
