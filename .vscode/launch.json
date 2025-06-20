@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Rubrik Exporter (DevContainer)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/src/golang",
+      "args": [],
+      "env": {},
+      "cwd": "${workspaceFolder}/src/golang"
+    }
+  ]
+}
