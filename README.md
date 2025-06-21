@@ -1,5 +1,7 @@
 # Rubrik Prometheus Agent
 
+[![Build and Push Docker Image](https://github.com/MFT-infra/rubrik-client-for-prometheus/actions/workflows/docker-publish.yml/badge.svg?branch=master)](https://github.com/MFT-infra/rubrik-client-for-prometheus/actions/workflows/docker-publish.yml)
+
 ## :hammer: Installation
 
 For installation instructions, see the [Quick Start Guide](quickstart.md)

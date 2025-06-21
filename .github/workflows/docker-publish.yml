@@ -2,7 +2,9 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]  # Change this if you want another branch
+    branches:
+      - master
+
 
 jobs:
   build:
@@ -42,7 +44,7 @@ jobs:
         if: github.event_name == 'push'
         uses: sigstore/cosign-installer@v3.4.0
 
-        
+
       - name: Sign Docker image with Cosign
         run: cosign sign --yes ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
         env:
