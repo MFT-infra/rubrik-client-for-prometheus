@@ -1,0 +1,51 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ main ]  # Change this if you want another branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write  # Required for GHCR
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Install Cosign
+        if: github.event_name == 'push'
+        uses: sigstore/cosign-installer@v3.4.0
+
+        
+      - name: Sign Docker image with Cosign
+        run: cosign sign --yes ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+
+

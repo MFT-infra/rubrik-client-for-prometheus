@@ -42,7 +42,7 @@ func init() {
 
 // GetRelicStorageStats ...
 func GetRelicStorageStats(rubrik *rubrikcdm.Credentials, clusterName string) {
-	relicRequest, err := rubrik.Get("v1", "/unmanaged_object?unmanaged_status=Relic", 60)
+	relicRequest, err := rubrik.Get("v1", "/unmanaged_object?unmanaged_status=Relic", 120)
 	if err != nil {
 		log.Println("Error from stats.GetRelicStorageStats: ", err)
 		return
