@@ -6,6 +6,11 @@ RUN apk add --no-cache git ca-certificates
 
 WORKDIR /src/golang
 
+# Set the DNS resolver to use the systemd stub resolver
+# This is necessary for Alpine to resolve DNS correctly in some environments
+
+RUN ln -sf ../run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
 # Copy go.mod and go.sum files to leverage Docker cache
 # This allows us to avoid re-downloading dependencies unless they change
 COPY go.mod go.sum ./
