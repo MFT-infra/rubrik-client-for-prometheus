@@ -25,7 +25,6 @@
     "vscode": {
       "settings": {},
       "extensions": [
-        "streetsidesoftware.code-spell-checker",
         "golang.Go",
         "github.vscode-pull-request-github",
         "GitHub.copilot",
@@ -39,7 +38,8 @@
   "portsAttributes": {
     "8080/metrics": {
       "label": "Prometheus Client http",
-      "onAutoForward": "notify"
+      "onAutoForward": "notify",
+      "protocol": "https"
     }
   },
   "postCreateCommand": "cd /workspaces/rubrik-client-for-prometheus/src/golang && go mod tidy"
