@@ -33,7 +33,8 @@
         "GitHub.remotehub",
         "github.github-vscode-theme",
         "davidanson.vscode-markdownlint",
-        "ms-azuretools.vscode-containers"
+        "ms-azuretools.vscode-containers",
+        "github.vscode-github-actions"
       ]
     }
   },
