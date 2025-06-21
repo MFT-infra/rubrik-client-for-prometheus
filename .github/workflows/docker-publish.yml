@@ -31,9 +31,12 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./src/golang
           file: ./src/golang/Dockerfile
@@ -44,10 +47,16 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Check if Docker image was built
+        run: |
+          if [ -z "${{ steps.build-and-push.outputs.digest }}" ]; then
+            echo "No Docker image was built. Exiting."
+            exit 1
+          fi
+
       - name: Install Cosign
         if: github.event_name == 'push'
         uses: sigstore/cosign-installer@v3.4.0
-
 
       - name: Sign Docker image with Cosign
         run: cosign sign --yes ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
