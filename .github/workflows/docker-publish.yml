@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: read
       packages: write  # Required for GHCR
+      id-token: write  # Needed for signing the images with GitHub OIDC Token
 
     steps:
       - name: Checkout code
@@ -56,12 +57,17 @@ jobs:
           fi
 
       - name: Install Cosign
-        if: github.event_name == 'push'
         uses: sigstore/cosign-installer@v3.4.0
 
-      - name: Sign Docker image with Cosign
-        run: cosign sign --yes ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+      - name: Sign the images with GitHub OIDC Token
         env:
-          COSIGN_EXPERIMENTAL: "1"
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
 
 
