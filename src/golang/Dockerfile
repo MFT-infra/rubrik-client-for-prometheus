@@ -10,7 +10,6 @@ WORKDIR /src/golang
 # This allows us to avoid re-downloading dependencies unless they change
 COPY go.mod go.sum ./
 RUN go mod download
-RUN go mod tidy
 RUN go mod verify
 
 # Copy source code
